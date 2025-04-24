@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat UI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_chat.css') }}"/>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div><img src="https://storage.googleapis.com/a1aa/image/07a516c4-96fe-4f23-aca6-bbab8d78807f.jpg" alt="Icon" width="24" height="24"></div>
+      <button><i class="fas fa-search"></i></button>
+      <button><i class="fas fa-user-friends"></i></button>
+      <button><i class="fas fa-user"></i></button>
+    </div>
+    <div class="chat-panel">
+      <div class="chat-box">
+        <div class="chat-list">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search">
+          </div>
+          <ul>
+            <li class="chat-item active">
+              <div class="chat-user">
+                <img src="https://storage.googleapis.com/a1aa/image/a20dfdd2-95cb-4505-eb09-9cd41103722a.jpg" alt="">
+                <div class="chat-user-info">
+                  <p>Eleanor Pena</p>
+                  <p>Sure! That works for me.</p>
+                </div>
+              </div>
+              <span class="timestamp">4:32 PM</span>
+            </li>
+            <li class="chat-item">
+              <div class="chat-user">
+                <img src="https://storage.googleapis.com/a1aa/image/91b36c42-423e-46f8-424c-cb47a158c72e.jpg" alt="">
+                <div class="chat-user-info">
+                  <p>Cameron Williamson</p>
+                  <p>No meeting</p>
+                </div>
+              </div>
+              <span class="timestamp">9:40</span>
+            </li>
+            <!-- Add more contacts as needed -->
+          </ul>
+        </div>
+        <div class="chat-messages">
+          <div class="chat-header">
+            <div class="profile">
+              <img src="https://storage.googleapis.com/a1aa/image/a20dfdd2-95cb-4505-eb09-9cd41103722a.jpg" alt="">
+              <p>Eleanor Pena</p>
+            </div>
+            <div class="status-dot"></div>
+          </div>
+          <div class="chat-content">
+            <div class="message right">Hil Are we still meeting today?</div>
+            <span class="timestamp right">4:30 PM</span>
+            <div class="message left">Yes, I'll be there.</div>
+            <span class="timestamp left">4:30 PM</span>
+            <div class="message right alt">Sure: That works for me.</div>
+            <span class="timestamp right">4:32 PM</span>
+            <div class="message left">Great, see you soon!</div>
+            <span class="timestamp left">4:32 PM</span>
+          </div>
+          <form class="chat-footer">
+            <input type="text" placeholder="Type a message...">
+            <button><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
