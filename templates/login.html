@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <!-- <link rel="stylesheet" href="D:/python_projects/Flask/chat app/static/Login.css"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-    <title>Document</title>
+    <title>Login Page</title>
 </head>
 <body>
     <div class="position-absolute top-50 start-50 translate-middle border border-primary-subtle">
@@ -30,15 +30,10 @@
             </div>
 
             <div>
-                {% if wrong_password %}
+                {% if Invalid %}
                     <h5 style="color: red; font-size: small;" class="position-absolute top-50 start-50 translate-middle">
-                        wrong password
+                        Wrong email or password
                     </h5>
-                {%endif%}
-                {% if user_not_found %}
-                    <h5 style="color: red; font-size: small" class="position-absolute top-50 start-50 translate-middle">
-                        user not found
-                    </h5> 
                 {%endif%}
               </div>
             <button class="button-submit" name="Sign_in">Sign In</button>
