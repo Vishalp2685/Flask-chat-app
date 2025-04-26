@@ -36,19 +36,22 @@
   <!-- <div>
     <button name="logout" style="border: 2px solid red; border-radius: 10px; margin: 20px; padding: 10px 30px; background-color: rgb(255, 165, 0);">Logout</button>
   </div> -->
-  <div class="flex md:flex-row max-w-7xl mx-auto overflow-hidden" style="height: 870px; margin: 50px auto auto auto; border-radius: 30px; border: 2px solid rgba(128, 128, 128, 0.505); background-color: #080A0F;">
+  <div class="flex overflow-hidden" style="height: 100vh; width: 100vw;width: 100vw; ">
    <!-- Sidebar: Contacts -->
-   <div style="border-right:1px solid rgba(128, 128, 128, 0.223); background-color: #080A0F;">
-    <img style="margin: 15px auto 0 auto" alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full" height="40" src="{{ url_for('static', filename='avatar.jpg') }}" width="60"/>
-    <div style="margin-top:720px;">
-      <button name="logout" style="color: white; font-weight:bolder; border-radius: 50px; margin: auto 15px 0 15px ;padding: 10px 20px; background-color: #ff0004a5;">Logout</button>
-    </div>
+   <div style="border-right:1px solid rgba(128, 128, 128, 0.223); background-color: #080A0F; width: 80px;position: relative;">
+    <img style="margin: 15px auto 0 auto" alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full" width="48" src="{{ url_for('static', filename='avatar.jpg') }}"/>
+    <button style="width:70px;margin-left: 3px;">
+      <img alt="Contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" width="100" src="{{ url_for('static', filename='add.png') }}" />
+    </button>
+    <div style="position: absolute; bottom: 15px;">
+      <button name="logout" style="color: white; font-weight:bolder; border-radius: 50px;padding: 2px 10px;margin-left: 5px;margin-right: 5px ; font-size: small;background-color: #ff0004a5;">Logout</button>
+    </div>  
   </div>
    <aside class="flex flex-col" style="border-right:1px solid rgba(128, 128, 128, 0.223);">
     <header class="flex items-center justify-between px-4 py-3" style="border-bottom:1px solid rgba(128, 128, 128, 0.223);padding: 16px;">
      <div class="flex items-center space-x-3">
       <!-- <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full" height="40" src="https://storage.googleapis.com/a1aa/image/d01a8a19-f525-4516-d34d-8c282a349194.jpg" width="40"/> -->
-      <h1 class="font-semibold" style="color: white; font-size:25px; padding: 1px;">
+      <h1 class="font-semibold" style="color: white; padding: 1px;">
        {{session['user_name']}}
       </h1>
      </div>
@@ -61,41 +64,35 @@
      <input style="border-radius: 15px; background-color: #0F1215; height:fit-content;" aria-label="Search contacts" class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Search or start new chat" type="search"/>
     </div>
     <nav class="flex-1 overflow-y-auto scrollbar-thin">
-     <ul>
-      {% for friend in friends %}
-      <li>
-        <form action="/loadchat/{{friend.get('friend_id')}}" method="POST">
-        <button value="{{user_id}}" aria-current="true" class="w-full flex items-center space-x-3 px-4 py-3 focus:outline-none focus:bg-gray-100 friend_button">
-         <img alt="Contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" height="48" src="{{ url_for('static', filename='avatar.jpg') }}" width="48"/>
-         <div class="flex-1 text-left">
-          <div class="flex justify-between items-center">
-           <p class="font-semibold" style="color: white;">
-            {{friend.get('first_name')}}
-           </p>
-           <!-- <time class="text-xs text-gray-500">
-            {{friend.get('last_message_time')}} 
-           </time> -->
-          </div>
-          <!-- <p class="text-sm text-gray-600 truncate">
-           {{friend.get('last_message')}}
-          </p> -->
-         </div>
-        </button>
-       </li>
-      </form>
-      {% endfor %}
-     </ul>
-    </nav>
+      <ul>
+       {% for friend in friends %}
+       <li>
+         <a href="{{ url_for('load_messages', friend_id=friend.get('friend_id')) }}" class="block w-full friend_button hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-gray-700 transition duration-150 ease-in-out">
+             <div class="flex items-center space-x-3 px-4 py-3">
+                 <img alt="{{ friend.get('first_name') }} profile picture" class="rounded-full" height="48" src="{{ url_for('static', filename='avatar.jpg') }}" width="48"/>
+                 <div class="flex-1 text-left">
+                     <div class="flex justify-between items-center">
+                         <p class="font-semibold text-white">
+                             {{ friend.get('first_name') }} {{ friend.get('last_name', '') }} {# Safely include last name if available #}
+                         </p>
+                         </div>
+                     </div>
+             </div>
+        </a>
+        </li>
+       {% endfor %}
+      </ul>
+     </nav>
    </aside>
    <!-- Chat area -->
    <section class="flex-1 flex flex-col" >
     <header class="flex items-center px-4 py-3" style="border-bottom:1px solid rgba(128, 128, 128, 0.223)">
-     <img alt="Chat contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" height="48" src="{{ url_for('static', filename='avatar.jpg') }}" width="48"/>
+     <img alt="Chat contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" src="{{ url_for('static', filename='avatar.jpg') }}" width="30"/>
      <div class="ml-3 flex-1">
-      <h2 class="text-lg font-semibold" style="color: white;">
+      <h1 class="font-semibold" style="color: white;font-size: 14px; ">
        {{name}}
-      </h2>
-      <p class="text-sm text-green-600">
+      </h1>
+      <p class="text-green-600" style="font-size: xx-small;">
        online
       </p>
      </div>
@@ -118,47 +115,256 @@
      <div class="flex items-start space-x-3 max-w-xs">
       <img alt="Alice L. profile picture, placeholder avatar with letters AL on blue background" class="rounded-full mt-1" height="32" src="{{ url_for('static', filename='avatar.jpg') }}" width="32"/>
       <div>
-       <div class="bg-white text-gray-900 p-3 rounded-lg rounded-bl-none shadow">
-        {{message.get('content')}}
+       <div class="rounded-lg rounded-bl-none shadow" style="width: fit-content;background-color: rgba(255, 255, 255, 0.526);">
+        <h1 style="padding: 5px;">{{message.get('content')}}</h1>
        </div>
-       <time class="block text-xs text-gray-400 mt-1 ml-1">
+       <!-- <time class="block text-xs text-gray-400 mt-1 ml-1">
         {{message.get('created_at')}}
-       </time>
+       </time> -->
       </div>
      </div>
      {% endif %}
      {% if message.get('sender_id') == session['user_id'] %}
      <div class="flex justify-end max-w-xs ml-auto items-start space-x-3 ">
-      <div>
-       <div class="bg-green-500 text-white p-3 rounded-lg rounded-br-none shadow">
-        {{message.get('content')}}
+      <div class="">
+       <div class="text-white rounded-lg rounded-br-none shadow  flex justify-end" style = "width:fit-content; background-color: rgba(0, 255, 94, 0.358);" >
+        <h1 style="padding: 5px;">{{message.get('content')}}</h1>
        </div>
-       <time class="block text-xs text-gray-400 mt-1 text-right">
+       <!-- <time class="block text-xs text-gray-400 mt-1 text-right">
         {{message.get('created_at')}}
-       </time>
+       </time> -->
       </div>
       <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full mt-1" height="32" src="{{ url_for('static', filename='avatar.jpg') }}" width="32"/>
      </div>
      {% endif %}
      {% endfor %}
     </main>
-
-    <form method="POST" aria-label="Send message form" class="px-4 py-3 flex items-center space-x-3" style="border-top: 1px solid rgba(128, 128, 128, 0.223);">
-     <button name="emoji" aria-label="Add emoji" class="text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded p-2" type="button">
-      <i class="far fa-smile fa-lg">
-      </i>
-     </button>
-     <button name="attach-file" aria-label="Attach file" class="text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded p-2" type="button">
-      <i class="fas fa-paperclip fa-lg">
-      </i>
-     </button>
-     <input name="message" style="background-color: #0F1215; border-radius: 50px; border: 1px solid rgba(128, 128, 128, 0.223);" aria-label="Message input" class="flex-1 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type a message" type="text"/>
-     <button aria-label="Send message" class="bg-green-500 hover:bg-green-600 text-white rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-green-500" type="submit">
-      <i class="fas fa-paper-plane fa-lg">
-      </i>
-     </button>
-    </form>
+    <form id="messageForm" aria-label="Send message form" class="px-4 py-3 flex items-center space-x-3" style="border-top: 1px solid rgba(128, 128, 128, 0.223);">
+      <button name="emoji" aria-label="Add emoji" class="text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded p-2" type="button">
+          <i class="far fa-smile fa-lg"></i>
+      </button>
+      <button name="attach-file" aria-label="Attach file" class="text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded p-2" type="button">
+          <i class="fas fa-paperclip fa-lg"></i>
+      </button>
+      <input id="messageInput" name="message" style="background-color: #0F1215;color: white; border-radius: 50px; border: 1px solid rgba(128, 128, 128, 0.223);" aria-label="Message input" class="flex-1 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type a message" type="text"/>
+      <button id="sendButton" aria-label="Send message" class="bg-green-500 hover:bg-green-600 text-white rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-green-500" type="submit">
+          <i class="fas fa-paper-plane fa-lg"></i>
+      </button>
+  </form>
    </section>
   </div>
  </body>
+
+
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+
+<script>
+    // --- Get necessary data passed from Flask template ---
+    const currentUserId = "{{ session.get('user_id') }}"; // Make sure user_id is reliably in session
+    // *** Get friend_id and chat_id passed from the template ***
+    const currentFriendId = "{{ current_friend_id }}"; // Use the variable passed from load_messages
+    const currentChatId = "{{ current_chat_id }}";   // Use the variable passed from load_messages
+
+    const avatarUrl = "{{ url_for('static', filename='avatar.jpg') }}";
+    const chatMessagesContainer = document.querySelector('main[aria-label="Chat messages"]');
+    const messageInput = document.getElementById('messageInput');
+    const messageForm = document.getElementById('messageForm');
+
+    // --- Socket Connection and Joining ---
+    var socket = io(); // Connects to the server host
+
+    socket.on('connect', () => {
+        console.log('Socket connected:', socket.id);
+        // *** Join the specific chat room IF a chat is loaded ***
+        if (currentChatId && currentChatId !== 'None' && currentFriendId) { // Ensure chat_id and friend_id are valid
+            const roomName = `chat_${currentChatId}`;
+            console.log(`Attempting to join room: ${roomName}`);
+            socket.emit('join', { room: roomName }); // Tell the server to add this client to the room
+        } else {
+            console.log("Not in a specific chat or chat_id missing, not joining a chat room via socket.");
+        }
+    });
+
+    // --- Function to scroll chat to bottom smoothly ---
+    function scrollToBottom() {
+        setTimeout(() => {
+             chatMessagesContainer.scrollTo({
+                top: chatMessagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 50); // Small delay can help
+    }
+
+    // --- Function to create and append a message element ---
+    function appendMessage(data) {
+        // Basic check for necessary data (using corrected keys)
+        if (!data || !data.content || data.sender_id === undefined) { // Check sender_id existence
+             console.error("appendMessage called with invalid data:", data);
+             return;
+        }
+
+        // Determine if the message was sent by the current user
+        // Use == for potential type coercion if IDs might be string/number mix, === if types are guaranteed same
+        const isSent = data.sender_id == currentUserId;
+
+        // --- Create Message Elements ---
+        const messageWrapperDiv = document.createElement('div');
+        const messageContentDiv = document.createElement('div');
+        const textElement = document.createElement('h1');
+        const avatarImg = document.createElement('img');
+
+        // --- Set common avatar properties ---
+        avatarImg.src = avatarUrl; // Assuming same avatar for now
+        avatarImg.alt = isSent ? "My profile picture" : "Friend's profile picture";
+        avatarImg.classList.add('rounded-full', 'mt-1');
+        avatarImg.setAttribute('width', '32');
+        avatarImg.setAttribute('height', '32');
+
+        // --- Style text element ---
+        textElement.style.padding = '5px';
+        textElement.textContent = data.content; // Use data.content
+
+        // --- Style and arrange based on sent or received ---
+        if (isSent) {
+            messageWrapperDiv.className = 'flex justify-end max-w-xs ml-auto items-start space-x-3';
+            const innerDiv = document.createElement('div'); // Container for bubble + time
+            messageContentDiv.className = 'text-white rounded-lg rounded-br-none shadow flex justify-end';
+            messageContentDiv.style.width = 'fit-content';
+            messageContentDiv.style.backgroundColor = 'rgba(0, 255, 94, 0.358)';
+            messageContentDiv.appendChild(textElement);
+            innerDiv.appendChild(messageContentDiv);
+            // Add timestamp if available:
+            // if (data.timestamp) { /* ... create and append time element ... */ }
+            messageWrapperDiv.appendChild(innerDiv);
+            messageWrapperDiv.appendChild(avatarImg);
+        } else {
+            messageWrapperDiv.className = 'flex items-start space-x-3 max-w-xs';
+            const innerDiv = document.createElement('div'); // Container for bubble + time
+            messageContentDiv.className = 'rounded-lg rounded-bl-none shadow';
+            messageContentDiv.style.width = 'fit-content';
+            messageContentDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.526)';
+            messageContentDiv.appendChild(textElement);
+            innerDiv.appendChild(messageContentDiv);
+            // Add timestamp if available:
+            // if (data.timestamp) { /* ... create and append time element ... */ }
+            messageWrapperDiv.appendChild(avatarImg);
+            messageWrapperDiv.appendChild(innerDiv);
+        }
+
+        chatMessagesContainer.appendChild(messageWrapperDiv);
+        // Scroll is called *after* appending
+    }
+
+
+    // --- Event Listener for sending messages ---
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const messageContent = messageInput.value;
+
+        // Use the currentFriendId obtained from the template
+        if (currentFriendId && messageContent.trim() !== '') {
+            console.log(`Sending message: "${messageContent}" to friend_id: ${currentFriendId}`);
+
+            // 1. Prepare data to emit (match server expectation for 'send_message')
+            const messageDataToSend = {
+                 content: messageContent,
+                 friend_id: currentFriendId // Server expects friend_id here
+            };
+            socket.emit('send_message', messageDataToSend);
+
+            // 2. OPTIMISTIC UI UPDATE: Immediately display the message locally
+            const localMessageData = {
+                content: messageContent,
+                sender_id: currentUserId, // Sender is the current user
+                // You don't strictly need recipient_id for local display, but good practice:
+                recipient_id: currentFriendId
+            };
+            appendMessage(localMessageData); // Display message right away
+
+            // 3. Scroll to bottom AFTER appending
+            scrollToBottom();
+
+            // 4. Clear the input field
+            messageInput.value = '';
+
+        } else if (!currentFriendId) {
+            console.error("No friend selected (currentFriendId is missing/invalid). Cannot send message.");
+            alert("Please select a chat to send a message."); // User feedback
+        } else {
+             console.log("Message is empty, not sending.");
+        }
+    });
+
+    // --- Event Listener for receiving messages ---
+    socket.on('receive_message', function(data) {
+        console.log('Received message data via socket:', data);
+
+        // *** Validate incoming data structure (using corrected keys from server) ***
+        if (data && data.content && data.sender_id !== undefined && data.recipient_id !== undefined) {
+
+            // *** IMPORTANT CHECK: Only append if it's meant for the current user and from the friend currently being viewed ***
+            // Check 1: Is the message NOT from me? (Avoid echo)
+            // Check 2: Is the recipient ME?
+            // Check 3: Is the sender the friend I am currently chatting with?
+            if (data.sender_id != currentUserId &&
+                data.recipient_id == currentUserId &&
+                data.sender_id == currentFriendId)
+            {
+                 console.log("Message is relevant to this chat. Appending.");
+                 appendMessage(data);
+                 scrollToBottom();
+            } else {
+                // Message received, but it's either my own echo, or for a different chat window
+                 if (data.sender_id == currentUserId) {
+                     console.log("Ignored echo of own sent message.");
+                 } else if (data.recipient_id != currentUserId) {
+                     console.log(`Ignored message: Recipient (${data.recipient_id}) is not me (${currentUserId}).`);
+                 } else if (data.sender_id != currentFriendId) {
+                     console.log(`Ignored message: Sender (${data.sender_id}) is not the current friend (${currentFriendId}).`);
+                     // TODO: Optionally show a notification indicator on the friend list for data.sender_id
+                 }
+            }
+        } else {
+            console.error('Received invalid or incomplete message data format via socket:', data);
+        }
+    });
+
+    // --- Scroll to bottom on initial page load ---
+    window.onload = function() {
+        // Scroll existing messages into view on load
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        // You might not need smooth scroll here, just jump to bottom instantly on load
+    };
+
+    // Optional: Add logout button functionality
+    const logoutButton = document.querySelector('button[name="logout"]');
+    if (logoutButton) {
+      logoutButton.addEventListener('click', function() {
+        // Redirect to Flask logout route
+        window.location.href = "{{ url_for('logout') }}"; // Make sure you have a logout route
+      });
+    }
+
+    // --- Socket Event Listeners for Debugging ---
+    socket.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+        // Optionally display a message to the user or attempt reconnection
+    });
+    socket.on('connect_error', (error) => {
+        console.error('Socket connection error:', error);
+        // Optionally display an error message
+    });
+    // Optional: Listen for custom server events if needed (e.g., 'joined_room', 'error')
+    // socket.on('joined_room', (data) => { console.log('Successfully joined room:', data.room); });
+    // socket.on('error', (data) => { console.error('Server sent an error:', data.message); });
+
+
+</script>
+</html>
+
 </html>

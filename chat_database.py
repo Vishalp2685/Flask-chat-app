@@ -167,10 +167,11 @@ def send_message(sender_id,chat_id,content):
         # Commit the changes
         connection.commit()
         print(cursor.rowcount, "record inserted.")
+        return True
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
-
+        return False
     finally:
         # Close cursor and connection
         if cursor:
