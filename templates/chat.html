@@ -9,9 +9,12 @@
   </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="D:/python_projects/Flask/chat app/static/chat.css">
   <style>
    body {
       font-family: 'Inter', sans-serif;
+      background-color: #070909;
+      /* margin: 30px; */
     }
     /* Scrollbar for chat messages */
     .scrollbar-thin::-webkit-scrollbar {
@@ -24,16 +27,28 @@
       background-color: rgba(107, 114, 128, 0.5);
       border-radius: 3px;
     }
+    .friend_button:hover{
+      background-color: #181c21;
+    }
   </style>
  </head>
- <body class="bg-gray-100 h-screen flex flex-col">
-  <div class="flex flex-col md:flex-row h-full max-w-7xl mx-auto w-full shadow-lg bg-white rounded-lg overflow-hidden">
+ <body>
+  <!-- <div>
+    <button name="logout" style="border: 2px solid red; border-radius: 10px; margin: 20px; padding: 10px 30px; background-color: rgb(255, 165, 0);">Logout</button>
+  </div> -->
+  <div class="flex md:flex-row max-w-7xl mx-auto overflow-hidden" style="height: 870px; margin: 50px auto auto auto; border-radius: 30px; border: 2px solid rgba(128, 128, 128, 0.505); background-color: #080A0F;">
    <!-- Sidebar: Contacts -->
-   <aside class="w-full md:w-80 border-r border-gray-200 flex flex-col">
-    <header class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+   <div style="border-right:1px solid rgba(128, 128, 128, 0.223); background-color: #080A0F;">
+    <img style="margin: 15px auto 0 auto" alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full" height="40" src="{{ url_for('static', filename='avatar.jpg') }}" width="60"/>
+    <div style="margin-top:720px;">
+      <button name="logout" style="color: white; font-weight:bolder; border-radius: 50px; margin: auto 15px 0 15px ;padding: 10px 20px; background-color: #ff0004a5;">Logout</button>
+    </div>
+  </div>
+   <aside class="flex flex-col" style="border-right:1px solid rgba(128, 128, 128, 0.223);">
+    <header class="flex items-center justify-between px-4 py-3" style="border-bottom:1px solid rgba(128, 128, 128, 0.223);padding: 16px;">
      <div class="flex items-center space-x-3">
-      <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full" height="40" src="https://storage.googleapis.com/a1aa/image/d01a8a19-f525-4516-d34d-8c282a349194.jpg" width="40"/>
-      <h1 class="text-xl font-semibold text-gray-800" style="color: black;">
+      <!-- <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full" height="40" src="https://storage.googleapis.com/a1aa/image/d01a8a19-f525-4516-d34d-8c282a349194.jpg" width="40"/> -->
+      <h1 class="font-semibold" style="color: white; font-size:25px; padding: 1px;">
        {{session['user_name']}}
       </h1>
      </div>
@@ -42,19 +57,19 @@
       </i>
      </button>
     </header>
-    <div class="px-4 py-3 border-b border-gray-200">
-     <input aria-label="Search contacts" class="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Search or start new chat" type="search"/>
+    <div class="px-4 py-3">
+     <input style="border-radius: 15px; background-color: #0F1215; height:fit-content;" aria-label="Search contacts" class="w-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Search or start new chat" type="search"/>
     </div>
     <nav class="flex-1 overflow-y-auto scrollbar-thin">
      <ul>
       {% for friend in friends %}
       <li>
         <form action="/loadchat/{{friend.get('friend_id')}}" method="POST">
-        <button value="{{user_id}}" aria-current="true" class="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-100 focus:outline-none focus:bg-gray-100">
-         <img alt="Contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" height="48" src="https://storage.googleapis.com/a1aa/image/83132244-537e-4cda-c648-f4e1d2c7f982.jpg" width="48"/>
+        <button value="{{user_id}}" aria-current="true" class="w-full flex items-center space-x-3 px-4 py-3 focus:outline-none focus:bg-gray-100 friend_button">
+         <img alt="Contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" height="48" src="{{ url_for('static', filename='avatar.jpg') }}" width="48"/>
          <div class="flex-1 text-left">
           <div class="flex justify-between items-center">
-           <p class="font-semibold text-gray-900">
+           <p class="font-semibold" style="color: white;">
             {{friend.get('first_name')}}
            </p>
            <!-- <time class="text-xs text-gray-500">
@@ -72,18 +87,12 @@
      </ul>
     </nav>
    </aside>
-
-
-
-
-
-
    <!-- Chat area -->
-   <section class="flex-1 flex flex-col">
-    <header class="flex items-center px-4 py-3 border-b border-gray-200">
-     <img alt="Chat contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" height="48" src="https://storage.googleapis.com/a1aa/image/2f2ec17b-a8b5-442f-ed87-353d46f431df.jpg" width="48"/>
+   <section class="flex-1 flex flex-col" >
+    <header class="flex items-center px-4 py-3" style="border-bottom:1px solid rgba(128, 128, 128, 0.223)">
+     <img alt="Chat contact profile picture, placeholder avatar with letters AL on blue background" class="rounded-full" height="48" src="{{ url_for('static', filename='avatar.jpg') }}" width="48"/>
      <div class="ml-3 flex-1">
-      <h2 class="text-lg font-semibold text-gray-900">
+      <h2 class="text-lg font-semibold" style="color: white;">
        {{name}}
       </h2>
       <p class="text-sm text-green-600">
@@ -103,11 +112,11 @@
       </i>
      </button>
     </header>
-    <main aria-label="Chat messages" class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin bg-gray-50">
+    <main aria-label="Chat messages" class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin" style="background-color: #05090B;">
       {% for message in messages %}
         {% if message.get('sender_id') != session['user_id'] %}
      <div class="flex items-start space-x-3 max-w-xs">
-      <img alt="Alice L. profile picture, placeholder avatar with letters AL on blue background" class="rounded-full mt-1" height="32" src="https://storage.googleapis.com/a1aa/image/84980a54-87d9-49b0-7185-290d453d096c.jpg" width="32"/>
+      <img alt="Alice L. profile picture, placeholder avatar with letters AL on blue background" class="rounded-full mt-1" height="32" src="{{ url_for('static', filename='avatar.jpg') }}" width="32"/>
       <div>
        <div class="bg-white text-gray-900 p-3 rounded-lg rounded-bl-none shadow">
         {{message.get('content')}}
@@ -128,13 +137,13 @@
         {{message.get('created_at')}}
        </time>
       </div>
-      <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full mt-1" height="32" src="https://storage.googleapis.com/a1aa/image/d01a8a19-f525-4516-d34d-8c282a349194.jpg" width="32"/>
+      <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full mt-1" height="32" src="{{ url_for('static', filename='avatar.jpg') }}" width="32"/>
      </div>
      {% endif %}
      {% endfor %}
     </main>
 
-    <form method="POST" aria-label="Send message form" class="border-t border-gray-200 px-4 py-3 flex items-center space-x-3">
+    <form method="POST" aria-label="Send message form" class="px-4 py-3 flex items-center space-x-3" style="border-top: 1px solid rgba(128, 128, 128, 0.223);">
      <button name="emoji" aria-label="Add emoji" class="text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded p-2" type="button">
       <i class="far fa-smile fa-lg">
       </i>
@@ -143,7 +152,7 @@
       <i class="fas fa-paperclip fa-lg">
       </i>
      </button>
-     <input name="message" aria-label="Message input" class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type a message" type="text"/>
+     <input name="message" style="background-color: #0F1215; border-radius: 50px; border: 1px solid rgba(128, 128, 128, 0.223);" aria-label="Message input" class="flex-1 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type a message" type="text"/>
      <button aria-label="Send message" class="bg-green-500 hover:bg-green-600 text-white rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-green-500" type="submit">
       <i class="fas fa-paper-plane fa-lg">
       </i>
@@ -152,8 +161,4 @@
    </section>
   </div>
  </body>
- <script>
-  const user_id = "{{session['user_id']}}";
-  console.log(user_id)
-</script>
 </html>

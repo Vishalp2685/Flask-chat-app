@@ -46,6 +46,8 @@ def login():
         if 'Sign_in' in request.form:
             username = request.form.get('email')
             password = request.form.get('password')
+            session['username'] = username
+            session['password'] = password
             if validate(username,password):
                 user_id = get_user_id_by_email(username)
                 session['user_id'] = user_id
@@ -62,6 +64,16 @@ def login():
                 return render_template('login.html',Invalid = wrong_password)   
         elif 'sign-up' in request.form:
             return redirect(url_for('sign_up'))
-    return render_template('login.html')
+    else:
+        if session:
+            friends = get_friends(session.get('user_id')) 
+            having_friends=len(friends) > 0
+            user_id = session.get('user_id')
+            if having_friends:
+                return render_template('chat.html', friends=friends,user_id=user_id,name="")
+            else:
+                return render_template('add_new_friends.html',user_id=user_id)
+        else:
+            return render_template('login.html')
 if __name__ == '__main__':
     app.run(debug=True)
