@@ -1,25 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_socketio import SocketIO, emit, join_room, leave_room # Import leave_room if needed later
-from database import validate, register_user
-from chat_database import get_friends, get_chats, get_user_id_by_email, get_name, get_chat_id, send_message
+from flask_socketio import SocketIO, join_room, leave_room 
+from chat_database import get_friends, get_chats, get_user_id_by_email, get_name, get_chat_id, send_message,validate, register_user
 
 app = Flask(__name__)
-# Make sure secret key is strong and ideally from env var
-app.secret_key = 'your_super_secret_key_please_change_me'
+app.secret_key = 'secret_key'
 socketio = SocketIO(app)
 
-# --- User Session Management ---
-# Helper to check if user is logged in
 def is_logged_in():
     return 'user_id' in session
 
 @app.before_request
 def check_login_except_for_auth_routes():
-    # Redirect to login if not logged in and not accessing login/signup
     if not is_logged_in() and request.endpoint not in ['login', 'sign_up', 'static']:
         return redirect(url_for('login'))
 
-# --- Routes ---
 
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
@@ -28,51 +22,48 @@ def sign_up():
         l_name = request.form.get('last_name')
         email = request.form.get('email')
         password = request.form.get('password')
-        # Add validation here (e.g., check if fields are empty, email format, password strength)
+        confirm_pass = request.form.get('Confirm_password')
+        if password != confirm_pass or len(password) < 8:
+            return render_template('signup.html',user_exist = True,correct_pass = False)
         success = register_user(f_name, l_name, email, password)
         if success:
             flash("Account created successfully! Please log in.", 'success')
             return redirect(url_for('login'))
         else:
-            # Assuming register_user returns False on failure (e.g., email exists)
+            print("user already exist")
             flash("Registration failed. Email might already be in use.", 'danger')
-            return render_template('signup.html') # Stay on signup page
-    return render_template('signup.html')
+            return render_template('signup.html',user_exist=False,correct_pass = True)
+    return render_template('signup.html',user_exist=True,correct_pass = True)
 
-@app.route('/loadchat/<int:friend_id>', methods=['GET']) # Use GET for loading data typically
+@app.route('/loadchat/<int:friend_id>', methods=['GET'])
 def load_messages(friend_id):
-    # Check login status (already handled by before_request, but good practice)
-    if not is_logged_in():
+    if 'logout' in request.form:
+        session.clear()
         return redirect(url_for('login'))
 
+    if not is_logged_in():
+        return redirect(url_for('login'))
     user_id = session['user_id']
-    session['friend_id'] = friend_id # Store current friend context in session
+    session['friend_id'] = friend_id
 
     friends = get_friends(user_id)
     messages = get_chats(user_id, friend_id)
-    name = "Unknown User" # Default name
+    name = "Unknown User"
     for friend in friends:
         if friend.get('friend_id') == friend_id:
             name = f"{friend.get('first_name', '')} {friend.get('last_name', '')}".strip()
             break
 
-    # *** IMPORTANT: Calculate chat_id here ***
     chat_id = get_chat_id(user_id, friend_id)
     if chat_id is None:
-        # Handle case where chat doesn't exist (maybe create it?)
-        # For now, flash a message or handle appropriately
         flash("Could not determine chat ID.", "warning")
-        # Decide where to redirect, maybe back to a default state?
-        # return redirect(url_for('show_chats')) # Assuming you have a route to show just the list
-
-    # *** Pass chat_id and friend_id explicitly to the template for JS ***
     return render_template('chat.html',
                            friends=friends,
                            having_friends=len(friends) > 0,
                            messages=messages,
                            name=name,
-                           current_chat_id=chat_id, # Pass chat_id
-                           current_friend_id=friend_id # Pass friend_id clearly
+                           current_chat_id=chat_id, 
+                           current_friend_id=friend_id 
                           )
 
 @app.route('/logout')
@@ -82,46 +73,32 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if is_logged_in(): # If already logged in, redirect to chat or dashboard
-         user_id = session['user_id']
-         friends = get_friends(user_id)
-         if friends:
-             # Maybe redirect to the first friend's chat or a general chat view
-             # For simplicity, let's reload the chat template without a specific friend selected yet
-              return render_template('chat.html', friends=friends, user_id=user_id, name="Select a Chat", messages=[], current_chat_id=None, current_friend_id=None)
-         else:
-              return render_template('add_new_friends.html', user_id=user_id)
-
+    if is_logged_in():
+        user_id = session['user_id']
+        friends = get_friends(user_id)
+        return render_template('chat.html', friends=friends, user_id=user_id, name="Select a Chat", messages=[], current_chat_id=None, current_friend_id=None)
 
     if request.method == 'POST':
-        # Simplified login/signup logic
+        print(request.form)
         if 'Sign_in' in request.form:
             email = request.form.get('email')
             password = request.form.get('password')
             if validate(email, password):
                 user_id = get_user_id_by_email(email)
                 session['user_id'] = user_id
-                session['user_name'] = get_name(user_id=user_id) # Assuming get_name gets the full name
-                session['username'] = email # Keep email if needed elsewhere
-
-                # Redirect to chat view after successful login
+                session['user_name'] = get_name(user_id=user_id) 
+                session['username'] = email 
                 friends = get_friends(user_id)
                 if friends:
-                    # Redirect to a general chat view state initially
                     return render_template('chat.html', friends=friends, user_id=user_id, name="Select a Chat", messages=[], current_chat_id=None, current_friend_id=None)
-                else:
-                    return render_template('add_new_friends.html', user_id=user_id)
             else:
                 flash("Invalid login credentials. Please try again.", 'danger')
-                return render_template('login.html', Invalid=True) # Pass flag if needed by template
+                return render_template('login.html', Invalid=True)
         elif 'sign-up' in request.form:
-             # This button likely submits the form, handle signup logic if needed
-             # Or redirect if it's just a link
-             return redirect(url_for('sign_up')) # Assuming it's a redirect button
+             return redirect(url_for('sign_up')) 
 
-    # Default: Show login page if GET request or failed POST
     return render_template('login.html')
 
 # --- SocketIO Events ---

@@ -11,11 +11,19 @@ def validate(email,password):
     
 
 def register_user(first_name,last_name,email,password):
+    already_exist = text("""
+                SELECT * FROM users WHERE email = :email
+                         """)
     query = text("""
          INSERT INTO login__info (first_name, last_name, email, password)
          VALUES (:first_name, :last_name, :email, :password)
      """)
     
+    with engine.connect() as conn:
+        user_exist = conn.execute(already_exist,{"email":email}).fetchone()
+        if user_exist == None:
+            return False
+
     with engine.connect() as conn:
         result = conn.execute(query,{
             "first_name":first_name,

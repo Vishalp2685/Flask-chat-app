@@ -1,0 +1,14 @@
+<li>
+    <a href="{{ url_for('load_messages', friend_id=friend.get('friend_id')) }}" class="block w-full friend_button hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-gray-700 transition duration-150 ease-in-out">
+        <div class="flex items-center space-x-3 px-4 py-3">
+            <img alt="{{ friend.get('first_name') }} profile picture" class="rounded-full" height="48" src="{{ url_for('static', filename='avatar.jpg') }}" width="48"/>
+            <div class="flex-1 text-left">
+                <div class="flex justify-between items-center">
+                    <p class="font-semibold text-white">
+                        {{ friend.get('first_name') }} {{ friend.get('last_name', '') }} {# Safely include last name if available #}
+                    </p>
+                    </div>
+                </div>
+        </div>
+   </a>
+   </li>

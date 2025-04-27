@@ -1,0 +1,26 @@
+{% if message.get('sender_id') != session['user_id'] %}
+     <div class="flex items-start space-x-3 max-w-xs">
+      <img alt="Alice L. profile picture, placeholder avatar with letters AL on blue background" class="rounded-full mt-1" height="32" src="{{ url_for('static', filename='avatar.jpg') }}" width="32"/>
+      <div>
+       <div class="rounded-lg rounded-bl-none shadow" style="width: fit-content;background-color: rgba(255, 255, 255, 0.526);">
+        <h1 style="padding: 5px;">{{message.get('content')}}</h1>
+       </div>
+       <!-- <time class="block text-xs text-gray-400 mt-1 ml-1">
+        {{message.get('created_at')}}
+       </time> -->
+      </div>
+     </div>
+     {% endif %}
+     {% if message.get('sender_id') == session['user_id'] %}
+     <div class="flex justify-end max-w-xs ml-auto items-start space-x-3 ">
+      <div class="">
+       <div class="text-white rounded-lg rounded-br-none shadow  flex justify-end" style = "width:fit-content; background-color: rgba(0, 255, 94, 0.358);" >
+        <h1 style="padding: 5px;">{{message.get('content')}}</h1>
+       </div>
+       <!-- <time class="block text-xs text-gray-400 mt-1 text-right">
+        {{message.get('created_at')}}
+       </time> -->
+      </div>
+      <img alt="User profile picture, a placeholder avatar with letter U on green background" class="rounded-full mt-1" height="32" src="{{ url_for('static', filename='avatar.jpg') }}" width="32"/>
+     </div>
+     {% endif %}
